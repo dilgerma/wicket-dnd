@@ -232,7 +232,7 @@
 				};
 			},
 		
-			dropTarget: function(id, attrs, operations, types, selectors) {
+			dropTarget: function(id, callbackUri, attrs, operations, types, selectors) {
 				var element = Wicket.$(id);
 
 				$(element).data('drop-target', {
@@ -259,7 +259,7 @@
 
 
 						if (location != wicketdnd.locationNone && !location.id) {
-							Wicket.Log.error('wicket-dnd: drop ' + location.anchor + ' matched selector but does not have markup id');
+							Wicket.Log.error('wicket-dnd: drop ' + location.anchor + ' matched selector but does not have markup id:' + JSON.stringify(location));
 							location = wicketdnd.locationNone;
 						}
 
@@ -275,8 +275,25 @@
 						attrs.ep['component'] = location.id;
 						attrs.ep['anchor'] = location.anchor;
 						attrs['sh'] = [success];
-						Wicket.Ajax.ajax(attrs);
-					}
+            /*
+            * backport to wicket 5, build the ajax uri manually.
+            * */
+            var url = callbackUri;
+             if (url.indexOf('?') == -1) {
+              url += "?phase=" + phase;
+            } else {
+              url += "&phase=" + phase;
+            }
+            url += "&operation=" + operation.name;
+            url += "&drag=" + id;
+            url += "&path=" + path;
+            url += "&component=" + location.id;
+            url += "&anchor=" + location.anchor;
+            url += "&behavior=" + behavior;
+            url += "&sh='success'";
+            Wicket.Log.info('dragAndDrop - Drop' + url);
+            wicketAjaxGet(url);
+          }
 				});
 
 				function findLocation(position, candidate, location) {

@@ -15,24 +15,21 @@
  */
 package wicketdnd;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptHeaderItem;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.request.Request;
-
 import wicketdnd.util.CollectionFormattable;
 import wicketdnd.util.MarkupIdVisitor;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A target of drops. Can be configured for specific {@link Location}s via CSS
@@ -145,7 +142,13 @@ public class DropTarget extends AbstractDefaultAjaxBehavior
 		return this;
 	}
 
-	/**
+    @Override
+    protected void onBind() {
+        super.onBind();
+        getComponent().setOutputMarkupId(true);
+    }
+
+    /**
 	 * Allow drop on the {@link Anchor#BOTTOM} of elements matching the given
 	 * selector.
 	 * 
@@ -199,7 +202,7 @@ public class DropTarget extends AbstractDefaultAjaxBehavior
 		return this;
 	}
 
-	@Override
+    @Override
 	public final void renderHead(Component component, IHeaderResponse response)
 	{
 		super.renderHead(component, response);
@@ -209,15 +212,15 @@ public class DropTarget extends AbstractDefaultAjaxBehavior
 
 	private void renderDropHead(IHeaderResponse response)
 	{
-		response.render(JavaScriptHeaderItem.forReference(Transfer.JS));
+		response.renderJavaScriptReference(Transfer.JS);
 
 		final String id = getComponent().getMarkupId();
 		String initJS = String.format(
-				"new wicketdnd.dropTarget('%s',%s,%s,%s,{'center':'%s','top':'%s','right':'%s','bottom':'%s','left':'%s'});", id,
-				renderAjaxAttributes(getComponent()), new CollectionFormattable(getOperations()),
+				"new wicketdnd.dropTarget('%s','%s',%s,%s,%s,{'center':'%s','top':'%s','right':'%s','bottom':'%s','left':'%s'});", id, getCallbackUrl(),
+				"[]", new CollectionFormattable(getOperations()),
 				new CollectionFormattable(getTypes()), centerSelector, topSelector, rightSelector,
 				bottomSelector, leftSelector);
-		response.render(OnDomReadyHeaderItem.forScript(initJS));
+		response.renderOnDomReadyJavaScript(initJS);
 	}
 
 	@Override

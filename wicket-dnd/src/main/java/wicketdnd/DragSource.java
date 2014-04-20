@@ -15,22 +15,19 @@
  */
 package wicketdnd;
 
-import java.util.Set;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptHeaderItem;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.protocol.http.PageExpiredException;
 import org.apache.wicket.request.Request;
-
 import wicketdnd.util.CollectionFormattable;
 import wicketdnd.util.MarkupIdVisitor;
+
+import java.util.Set;
 
 /**
  * A source of drags.
@@ -180,7 +177,7 @@ public class DragSource extends Behavior
 
 	private void renderDragHead(IHeaderResponse response)
 	{
-		response.render(JavaScriptHeaderItem.forReference(Transfer.JS));
+		response.renderJavaScriptReference(Transfer.JS);
 
 		final String id = component.getMarkupId();
 		final String path = component.getPageRelativePath();
@@ -191,7 +188,7 @@ public class DragSource extends Behavior
 						id, behavior, path, new CollectionFormattable(getOperations()),
 						new CollectionFormattable(getTypes()), selector, initiateSelector,
 						cloneSelector);
-		response.render(OnDomReadyHeaderItem.forScript(initJS));
+		response.renderOnDomReadyJavaScript(initJS);
 	}
 
 	@Override

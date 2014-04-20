@@ -17,9 +17,7 @@ package wicketdnd;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptHeaderItem;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.protocol.http.request.WebClientInfo;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
@@ -48,10 +46,10 @@ public class IECursorFix extends Behavior
 		WebClientInfo info = new WebClientInfo(RequestCycle.get());
 		if (info.getProperties().isBrowserInternetExplorer())
 		{
-			response.render(JavaScriptHeaderItem.forReference(JS));
+			response.renderJavaScriptReference(JS);
 
-			String initJS = "IECursor.fix();";
-			response.render(OnDomReadyHeaderItem.forScript(initJS));
+			String initJS = "IECursor.fix();}";
+			response.renderOnDomReadyJavaScript(initJS);
 		}
 	}
 }
